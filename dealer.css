@@ -1,0 +1,103 @@
+* {margin:0; padding:0;}
+html, body {width:100%; height:100%; font-family:Arial, Helvetica, sans-serif; font-size:12px; text-align:center;}
+
+#salon{
+	width:800px;
+	min-height:1100px;
+	border:10px solid;
+	border-color:#CCC;
+	margin:0 auto; 
+	margin-top:50px;
+}
+#display{
+	margin-left:500px;
+	position:absolute;
+	width:260px;
+	margin-top:10px;
+}
+#display ul{padding:0px;}
+#display ul li{
+	border:1px solid;
+	display:inline-block;
+	padding:10px;
+}
+#clients_queue,#cashier,#exit{border:1px solid; border-color:#666;} .client{
+	width:80px; 
+	height:80px;
+	position:absolute;
+	line-height:80px;
+	font-size:10px;
+	border:1px solid	
+}
+#clients_queue{
+	width:200px;
+	min-height: 500px;
+	position: absolute;
+	margin-left:590px;
+	margin-top:90px;
+	text-align:center;
+}
+#cashier{
+	width:150px;
+	min-height:200px;
+	position:absolute;
+	margin-top:390px;
+	margin-left:420px;
+}
+#exit{
+	width:150px;
+	height:200px;
+	position:absolute;
+	margin-top:180px;
+	margin-left:420px;
+}
+.client{
+	margin: 0 auto;
+	background-color:#FFF;
+	line-height:10px;
+	background-position:bottom;
+	background-repeat:no-repeat;
+    position:relative;
+	margin-top:10px;
+}
+.place{
+	position: absolute;
+	width: 400px;
+	/* height: 140px; */
+	border:1px solid;
+}
+#volkswagen{
+	margin-top:150px;
+}
+#audi{
+	margin-top:300px;
+}
+#bmw{
+	margin-top:460px;
+}
+.client_1{background-image:url(images/client_1.jpg);}
+.client_2{background-image:url(images/client_2.jpg);}
+.client_3{background-image:url(images/client_3.jpg);}
+.client_4{background-image:url(images/client_4.jpg);}
+.client_5{background-image:url(images/client_5.jpg);}
+.client_6{background-image:url(images/client_6.jpg);}
+.client_7{background-image:url(images/client_7.jpg);}
+.client_8{background-image:url(images/client_8.jpg);}
+.client_9{background-image:url(images/client_9.jpg);}
+.client_10{background-image:url(images/client_10.jpg);}
+
+
+
+/* add */
+.car-brand {
+	margin: 20px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	display: inline-block;
+	text-align: center;
+}
+img {
+	width: 100px; /* Set a fixed width for images */
+	height: auto; /* Maintain aspect ratio */
+	margin: 5px; /* Add some space between images */
+}

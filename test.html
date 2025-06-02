@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Inventory</title>
+    <style>
+        .car-brand {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            text-align: center;
+        }
+        img {
+            width: 100px; /* Set a fixed width for images */
+            height: auto; /* Maintain aspect ratio */
+            margin: 5px; /* Add some space between images */
+        }
+    </style>
+</head>
+<body>
+    <div class="car-brand porsche">
+        <h2>Porsche</h2>
+        <div class="car-images">
+            <img src="images/Audi_1.jpg" alt="Porsche Car 1" class="car-image">
+            <img src="images/Audi_2.jpg" alt="Porsche Car 2" class="car-image">
+            <img src="images/Audi_3.jpg" alt="Porsche Car 3" class="car-image">
+        </div>
+        <p>Available: <span class="car-count">3</span></p>
+        <button class="sell-car">Sell Car</button>
+    </div>
+
+    <div class="car-brand bmw">
+        <h2>BMW</h2>
+        <div class="car-images">
+            <img src="images/BMW_1.jpg" alt="BMW Car 1" class="car-image">
+            <img src="images/bmw_2.jpg" alt="BMW Car 2" class="car-image">
+        </div>
+        <p>Available: <span class="car-count">2</span></p>
+        <button class="sell-car">Sell Car</button>
+    </div>
+
+    <div class="car-brand volvo">
+        <h2>Volvo</h2>
+        <div class="car-images">
+            <img src="volvo_1.jpg" alt="Volvo Car 1" class="car-image">
+        </div>
+        <p>Available: <span class="car-count">1</span></p>
+        <button class="sell-car">Sell Car</button>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

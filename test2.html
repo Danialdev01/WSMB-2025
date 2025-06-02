@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Queue</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .client {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer; /* Change cursor to pointer for clickable effect */
+        }
+    </style>
+</head>
+<body>
+    <div id="clients_queue"></div>
+    <button id="add_client">Add Client</button>
+    <button id="remove_oldest_client">Remove Oldest Client</button>
+
+    <script>
+        let clientCount = 0;
+        let brandlist = ["Porsche", "Volkswagen", "Audi", "BMW"];
+        let customerQueue = [];
+
+        // Add a client
+        $("#add_client").click(function() {
+            clientCount++;
+            let preference = Math.floor(Math.random() * brandlist.length); // Random preference
+            let clientName = "Client " + clientCount; // Example client name
+            customerQueue.push(clientName); // Add to the queue
+            $("#clients_queue").append('<div class="client" data-name="'+clientName+'"><span class="preference">Profile of '+clientName+' interested in '+brandlist[preference]+'</span></div>');
+        });
+
+        // Remove the oldest client
+        $("#remove_oldest_client").click(function() {
+            $("#clients_queue .client").first().remove(); // Remove the first client
+            customerQueue.shift(); // Also remove from the customerQueue array
+        });
+
+        // Handle profile click
+        $(document).on('click', '.client', function() {
+            let clientName = $(this).data('name'); // Get the client name from data attribute
+            let userChoice = prompt(`Do you want to buy a car or exit? Type "buy" to purchase or "exit" to leave.`);
+
+            if (userChoice && userChoice.toLowerCase() === "buy") {
+                // Handle the purchase logic here
+                alert(`${clientName} has chosen to buy a car!`);
+                // You can add more logic to process the purchase
+            } else if (userChoice && userChoice.toLowerCase() === "exit") {
+                // Remove the client from the queue
+                $(this).remove(); // Remove from the DOM
+                customerQueue = customerQueue.filter(name => name !== clientName); // Remove from the customerQueue array
+                alert(`${clientName} has exited the queue.`);
+            } else {
+                alert("Invalid choice. Please type 'buy' or 'exit'.");
+            }
+        });
+    </script>
+</body>
+</html>
