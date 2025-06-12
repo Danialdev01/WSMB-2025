@@ -1,82 +1,463 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Car Dealer</title>
-	<link rel="stylesheet" href="dealer.css" type="text/css" />
-	<script type="text/javascript" language="javascript" src="jquery/js/jquery-1.8.3.js"></script>
-	<script type="text/javascript" language="javascript" src="jquery/js/jquery-ui-1.9.2.custom.js"></script>
-    <script type="text/javascript" language="javascript" src="dealer.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ Auto Enterprise - Used Car Dealership</title>
+    <script src="./jquery/js/jquery-1.8.3.js"></script>
+    <script src="./jquery/js/jquery-ui-1.9.2.custom.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* Queue Area */
+        #queue-section {
+            width: 100%;
+        }
+
+        #clients-queue {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            min-height: 150px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px dashed #6c757d;
+            border-radius: 10px;
+        }
+
+        /* Showroom Area */
+        #showroom-section {
+            flex: 3;
+            min-width: 300px;
+        }
+
+        .cars-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .car-brand {
+            margin-bottom: 30px;
+        }
+
+        .brand-title {
+            background: #343a40;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .car-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .car-slot {
+            height: 100px;
+            background: #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 5px;
+            border: 2px solid #ced4da;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .car-label {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            width: 100%;
+        }
+
+        .car-slot.available {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .car-slot.occupied {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+
+        .car-slot.sold {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .sold-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #dc3545;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px;
+            text-align: center;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        /* Controls and Stats Area */
+        #controls-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .control-area {
+            margin-bottom: 30px;
+        }
+
+        .area-box {
+            height: 150px;
+            background: #e9ecef;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #495057;
+            border: 3px solid #ced4da;
+            transition: all 0.3s ease;
+        }
+
+        .area-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #cashier {
+            background: #cce5ff;
+            border-color: #b8daff;
+        }
+
+        #exit {
+            background: #f5f5f5;
+            border-color: #e0e0e0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FFD700;
+        }
+
+        /* Client Styling */
+        .client {
+            width: 90px;
+            height: 90px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 3px solid white;
+            z-index: 100;
+        }
+
+        .client.in-slot {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            z-index: 101;
+        }
+
+        .client-label {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 102;
+        }
+
+        .client.in-slot .client-label {
+            font-size: 0.6rem;
+            bottom: -12px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #007bff, #0069d9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #28a745, #218838);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(to right, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animation */
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.5); }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .cars-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        purchase-dialog{
+            background-color: white;
+        }
+    </style>
 </head>
-
 <body>
-	<div id="salon">
-    	<div id="clients_queue">
-        	clients queue
-        </div>
-    	<div id="cars_place">
-        	<div id="porsche" class="place">
-				Place for Porsche cars
+    <div class="container">
+        <header>
+            <div class="logo">AZ AUTO</div>
+            <h1>AZ Auto Enterprise</h1>
+            <div class="subtitle">Used Car Dealership Simulation</div>
+            <p>Manage customer flow and car sales in real-time</p>
+        </header>
 
-				<div class="car-images">
-					<img src="images/Porsche_1.jpg" alt="Car 1" class="car-image">
-					<img src="images/Porsche_2.jpg" alt="Car 2" class="car-image">
-					<img src="images/Porsche_3.jpg" alt="Car 3" class="car-image">
-				</div>
-			
+        <div class="main-content">
+            <!-- Queue Section -->
+            <div id="queue-section" class="panel">
+                <div class="panel-title">CUSTOMER QUEUE (Max: 10)</div>
+                <div id="clients-queue"></div>
             </div>
 
-        	<div id="volkswagen" class="place">
-				Place for Volkswagen cars
+            <!-- Showroom Section -->
+            <div id="showroom-section" class="panel">
+                <div class="panel-title">CAR SHOWROOM</div>
+                <div class="cars-container">
+                    <!-- Porsche Section -->
+                    <div class="car-brand">
+                        <div class="brand-title">PORSCHE (RM 650,000) - 4 cars</div>
+                        <div class="car-slots" id="porsche">
+                            <!-- Porsche car slots will be generated dynamically -->
+                        </div>
+                    </div>
 
-				<div class="car-images">
-					<img src="images/Volkswagen_1.jpg" alt="Car 1" class="car-image">
-					<img src="images/volkswagen_2.png" alt="Car 2" class="car-image">
-					<img src="images/volkswagen_3.jpg" alt="Car 3" class="car-image">
-				</div>
+                    <!-- Volkswagen Section -->
+                    <div class="car-brand">
+                        <div class="brand-title">VOLKSWAGEN (RM 180,000) - 6 cars</div>
+                        <div class="car-slots" id="volkswagen">
+                            <!-- Volkswagen car slots will be generated dynamically -->
+                        </div>
+                    </div>
 
+                    <!-- Audi Section -->
+                    <div class="car-brand">
+                        <div class="brand-title">AUDI (RM 300,000) - 5 cars</div>
+                        <div class="car-slots" id="audi">
+                            <!-- Audi car slots will be generated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- BMW Section -->
+                    <div class="car-brand">
+                        <div class="brand-title">BMW (RM 250,000) - 3 cars</div>
+                        <div class="car-slots" id="bmw">
+                            <!-- BMW car slots will be generated dynamically -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
-        	<div id="audi" class="place">
-				Place for Audi cars
+            <!-- Controls and Stats Section -->
+            <div id="controls-section" class="panel">
+                <!-- Cashier Area -->
+                <div class="control-area">
+                    <div class="panel-title">CASHIER</div>
+                    <div id="cashier" class="area-box">
+                        <div>Pay Here</div>
+                    </div>
+                </div>
 
-				<div class="car-images">
-					<img src="images/Audi_1.jpg" alt="Car 1" class="car-image">
-					<img src="images/Audi_2.jpg" alt="Car 2" class="car-image">
-					<img src="images/Audi_3.jpg" alt="Car 3" class="car-image">
-				</div>
+                <!-- Exit Area -->
+                <div class="control-area">
+                    <div class="panel-title">EXIT</div>
+                    <div id="exit" class="area-box">
+                        <div>Exit Store</div>
+                    </div>
+                </div>
 
+                <!-- Statistics -->
+                <div class="control-area">
+                    <div class="panel-title">SALES STATISTICS</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div>Customers Served</div>
+                            <div id="clients-served" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div>Cars Sold</div>
+                            <div id="cars-sold" class="stat-value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div>Total Revenue</div>
+                            <div id="amount" class="stat-value">RM 0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-        	<div id="bmw" class="place">
-				Place for BMW cars
-
-				<div class="car-images">
-					<img src="images/BMW_1.jpg" alt="Car 1" class="car-image">
-					<img src="images/bmw_2.jpg" alt="Car 2" class="car-image">
-					<img src="images/bmw_3.jpg" alt="Car 3" class="car-image">
-				</div>
-
-            </div>
-        </div>
-        <div id="cashier">
-        	cashier
-        </div>
-        <div id="exit">
-        	exit
-        </div>
-        <div id="display">
-        	<ul>
-            	<li id="clients_served">10 clients</li>
-				<li id="cars_sold">10 cars</li>
-                <li id="amount">€ 120.000,00</li>
-            </ul>    
         </div>
     </div>
 
-	<button onclick="showCar()">Show Car</button>
-	<button onclick="purchaseCar()">Purchase Car</button>
-	<button onclick="newClient()">New CLient</button>
-	<button onclick="exitClient()">Exit CLient</button>
+    <script src="./main.js"></script>
 </body>
 </html>
