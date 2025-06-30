@@ -7,36 +7,6 @@
     <script src="./jquery/js/jquery-1.8.3.js"></script>
     <script src="./jquery/js/jquery-ui-1.9.2.custom.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
-            color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        header {
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
 
         .logo {
             position: absolute;
@@ -45,19 +15,6 @@
             font-size: 24px;
             font-weight: bold;
             color: #FFD700;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #FFD700;
-            margin-bottom: 10px;
         }
 
         .main-content {
@@ -70,13 +27,12 @@
         .panel {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 20px;
         }
 
         .panel-title {
-            background: linear-gradient(to right, #2c3e50, #4a6491);
+            background: lightblue;
             color: white;
             padding: 10px;
             border-radius: 5px;
@@ -190,7 +146,6 @@
         /* Controls and Stats Area */
         #controls-section {
             flex: 1;
-            min-width: 300px;
         }
 
         .control-area {
@@ -199,31 +154,15 @@
 
         .area-box {
             height: 150px;
-            background: #e9ecef;
-            border-radius: 10px;
+            background: #cce5ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            font-weight: bold;
             color: #495057;
-            border: 3px solid #ced4da;
-            transition: all 0.3s ease;
         }
 
         .area-box:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #cashier {
-            background: #cce5ff;
-            border-color: #b8daff;
-        }
-
-        #exit {
-            background: #f5f5f5;
-            border-color: #e0e0e0;
+            transform: scale(1.05);
         }
 
         .stats-grid {
@@ -231,21 +170,6 @@
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
-            color: white;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #FFD700;
         }
 
         /* Client Styling */
@@ -275,7 +199,7 @@
         }
 
         .client-label {
-            background: rgba(0, 0, 0, 0.7);
+            background: black;
             color: white;
             padding: 3px 8px;
             border-radius: 10px;
@@ -288,77 +212,6 @@
             z-index: 102;
         }
 
-        .client.in-slot .client-label {
-            font-size: 0.6rem;
-            bottom: -12px;
-        }
-
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(to right, #007bff, #0069d9);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(to right, #28a745, #218838);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(to right, #dc3545, #c82333);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Animation */
-        @keyframes fadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.5); }
-        }
-
-        .fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 0.5s;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .cars-container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
         purchase-dialog{
             background-color: white;
         }
@@ -366,12 +219,6 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">AZ AUTO</div>
-            <h1>AZ Auto Enterprise</h1>
-            <div class="subtitle">Used Car Dealership Simulation</div>
-            <p>Manage customer flow and car sales in real-time</p>
-        </header>
 
         <div class="main-content">
             <!-- Queue Section -->
@@ -379,7 +226,7 @@
                 <div class="panel-title">CUSTOMER QUEUE (Max: 10)</div>
                 <div id="clients-queue"></div>
             </div>
-
+            
             <!-- Showroom Section -->
             <div id="showroom-section" class="panel">
                 <div class="panel-title">CAR SHOWROOM</div>
@@ -422,17 +269,15 @@
             <div id="controls-section" class="panel">
                 <!-- Cashier Area -->
                 <div class="control-area">
-                    <div class="panel-title">CASHIER</div>
                     <div id="cashier" class="area-box">
-                        <div>Pay Here</div>
+                        <div>Cashier</div>
                     </div>
                 </div>
 
                 <!-- Exit Area -->
                 <div class="control-area">
-                    <div class="panel-title">EXIT</div>
                     <div id="exit" class="area-box">
-                        <div>Exit Store</div>
+                        <div>Exit</div>
                     </div>
                 </div>
 
@@ -458,6 +303,6 @@
         </div>
     </div>
 
-    <script src="./main.js"></script>
+    <script src="./dealer.js"></script>
 </body>
 </html>

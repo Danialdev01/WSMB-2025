@@ -1,190 +1,264 @@
-// set customer info 
-let customerQueue = [];
-let customerBMW = [];
-let customerPorsche = [];
-let customerVolkswagen = [];
-let customerAudi = [];
-
-let customerIndex = 0;
-let customersServed = 0;
-let carsSold = 0;
-let totalCollected = 0;
-
-var brandlist = new Array("Porsche","Volkswagen","Audi","BMW");
-
-let carsAvailable = {
-    Porsche: 4,
-    Volkswagen: 6,
-    Audi: 5,
-    BMW: 3
-};
-
-let carsPrice = {
-	Porsche: 650000.00,
-	Volkswagen: 180000.00,
-	Audi: 300000.00,
-	BMW: 250000.00
-};
-
-// add client
-function newClient(){
-
-	console.log(customerIndex);
-
-	if(customerQueue.length + 1 <= 10){
-
-		// set random client profile
-		var preference = Math.floor((Math.random()*4));
-		var client = Math.floor((Math.random()*10)+1);
-		$("#clients_queue").append('<div class="client client_'+ client +'" data-index="'+customerIndex+'" data-preference="' + brandlist[preference] + '" ><span class="preference">Client for '+brandlist[preference]+'</span></div>'); customerQueue.push(customerIndex++);
-		makeClientsDraggable();
-	}
-	else{
-
-		alert(`Sorry, max 10 customers at any one time.`);
-	}
-	
-}
-
-// remove client
-function exitClient(){
-	$("#clients_queue .client").first().remove();
-	customerQueue.shift();
-}
-
-function moveClient(carBrand){
-
-	let clientAvatar = $("#clients_queue .client").first().remove();
-	let clientInfo = customerQueue.shift();
-
-	$("#"+ carBrand.toLowerCase()).append(clientAvatar); 
-
-	if(carBrand == "BMW"){customerBMW.push(clientInfo);}
-	else if(carBrand == "Volkswagen"){customerVolkswagen.push(clientInfo);}
-	else if(carBrand == "Porsche"){customerPorsche.push(clientInfo);}
-	else if(carBrand == "Audi"){customerAudi.push(clientInfo);}
-	else{alert("Error")};
-
-}
-
-// show car
-function showCar() {
-
-    if (customerQueue.length > 0) {
-
-        // const customer = customerQueue.shift();
-        const carBrand = prompt("Enter preferred car brand (Porsche, Volkswagen, Audi, BMW):");
-        
-        if (carsAvailable[carBrand] > 0) {
-
-			moveClient(carBrand);
-			
-        } 
-		else {
-
-			// error purchase car
-            alert(`Sorry, ${carBrand} is sold out!`);
-        }
-
-        updateStatistics();
-    } 
-	else {
-
-        alert("No customers in queue!");
-    }
-}
-
-function purchaseCar(){
-
-	// purchase car
-    const carBrandDiv = event.target.parentElement; // Get the parent div of the button
-	customersServed++;
-	// totalCollected += carsPrice[carBrand]; 
-	alert(`Customer purchased a ${carBrandDiv.id}!`);
-	updateStatistics();
-	cashier(carBrandDiv.id)
-
-}
-
-function cashier(carBrand){
-	carsSold++;
-	carsAvailable[carBrand]--;
-}
-
-// client click profile
-$(document).on('click', '.place .client', function() {
-	let clientName = $(this).data('index'); // Get the client name from data attribute
-	let userChoice = prompt(`Do you want to buy a car or exit? Type "buy" to purchase or "exit" to leave.`);
-
-	if (userChoice && userChoice.toLowerCase() === "buy") {
-		// Handle the purchase logic here
-		purchaseCar()
-		alert(`${clientName} has chosen to buy a car!`);
-
-	} 
-	else if (userChoice && userChoice.toLowerCase() === "exit") {
-		exitClient();
-	} 
-	else {
-		alert("Invalid choice. Please type 'buy' or 'exit'.");
-	}
-});
-
-
-function makeClientsDraggable() {
-
-    $(".client").draggable({
-
-        revert: function(dropped) {
-            // If the item was not dropped on a valid droppable, revert to original position
-            return !dropped;
-
+$(document).ready(function() {
+    // Application state
+    const state = {
+        brands: ["Porsche", "Volkswagen", "Audi", "BMW"],
+        carCounts: {
+            Porsche: 6,
+            Volkswagen: 6,
+            Audi: 5,
+            BMW: 5
         },
-
-        start: function(event, ui) {
-
-            // Store the original position
-            $(this).data("originalPosition", ui.position);
-
+        prices: {
+            Porsche: 650000,
+            Volkswagen: 180000,
+            Audi: 300000,
+            BMW: 250000
+        },
+        queue: [],
+        carSlots: {},
+        stats: {
+            customersServed: 0,
+            carsSold: 0,
+            amountCollected: 0
         }
+    };
 
-    });
-
-
-    $(".place").droppable({
-
-        accept: ".client",
-        drop: function(event, ui) {
-            var clientAvatar = ui.draggable;
-            var carBrand = $(this).attr("id");
-            var clientPreference = clientAvatar.data("preference");
-
-            if (clientPreference.toLowerCase() === carBrand) {
-                clientAvatar.remove();
-                moveClientToBrand(carBrand);
-                purchaseCar(carBrand);
-                alert("Success! Client placed in " + carBrand);
-
-            } else {
-                // If the drop is not valid, revert to the original position
-                var originalPosition = clientAvatar.data("originalPosition");
-                clientAvatar.animate({
-                    top: originalPosition.top,
-                    left: originalPosition.left
-                }, 500); // Animate back to original position
-                alert("This client prefers a different brand! " + clientPreference + " vs " + carBrand);
+    // Preload car images
+    function preloadCarImages() {
+        const images = [];
+        for (const brand of state.brands) {
+            const count = state.carCounts[brand];
+            for (let i = 1; i <= count; i++) {
+                images.push(`images/${brand.toLowerCase()}_${i}.jpg`);
             }
         }
-    });
-}
+        
+        // Create hidden image elements to preload
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    }
+    
+    // Initialize car slots
+    function initializeCarSlots() {
+        for (const brand of state.brands) {
+            state.carSlots[brand] = [];
+            const $brandDiv = $(`#${brand.toLowerCase()}`);
+            
+            for (let i = 0; i < state.carCounts[brand]; i++) {
+                const $slot = $(`<div class="car-slot available" data-brand="${brand}" data-index="${i}">
+                                    <div class="car-label">${brand} ${i+1}</div>
+                                    </div>`);
+                    
+                // Set car image
+                $slot.css('background-image', `url('images/${brand.toLowerCase()}_${i+1}.jpg')`);
+                
+                $brandDiv.append($slot);
+                state.carSlots[brand].push({
+                    element: $slot,
+                    occupied: false,
+                    sold: false
+                });
+            }
+        }
+    }
 
-function updateStatistics(){
+    // Create a new customer with provided images
+    function newClient() {
+        if (state.queue.length >= 10) {
+            // Queue full, try again later
+            setTimeout(newClient, 3000);
+            return;
+        }
+        
+        const preference = Math.floor(Math.random() * 4);
+        const brand = state.brands[preference];
+        const clientNum = Math.floor(Math.random() * 10) + 1;
+        
+        const clientId = `client-${Date.now()}`;
+        const $client = $(`<div class="client" id="${clientId}" data-original-brand="${brand}" data-current-brand="${brand}">
+                                <div class="client-label">${brand}</div>
+                            </div>`);
+        
+        // Use the provided client images
+        $client.css('background-image', `url('images/client_${clientNum}.jpg')`);
+        
+        $("#clients-queue").append($client);
+        
+        state.queue.push({
+            id: clientId,
+            brand: brand,
+            element: $client
+        });
+        
+        // Make the client draggable
+        $client.draggable({
+            revert: "invalid",
+            cursor: "move",
+            zIndex: 1000,
+            containment: "document",
+            start: function() {
+                $(this).css('z-index', '1001');
+            }
+        });
+        
+        // Set timeout for next customer
+        const time = Math.floor(Math.random() * 5000) + 2000;
+        setTimeout(newClient, time);
+    }
 
-	document.getElementById('clients_served').textContent = `${customersServed} clients`;
-	document.getElementById('cars_sold').textContent = `${carsSold} cars`;
-	document.getElementById('amount').textContent = `$ ${totalCollected}`;
-}
-
-$("document").ready(function(e) {
-	updateStatistics();
+    // Initialize droppable areas
+    function initializeDroppables() {
+        // Make car slots droppable
+        $(".car-slot").droppable({
+            accept: ".client",
+            hoverClass: "ui-state-hover",
+            drop: function(event, ui) {
+                const $slot = $(this);
+                const brand = $slot.data("brand");
+                const slotIndex = $slot.data("index");
+                const $client = ui.draggable;
+                const clientOriginalBrand = $client.data("original-brand");
+                
+                // Only allow if car slot is available
+                if (state.carSlots[brand][slotIndex].occupied || 
+                    state.carSlots[brand][slotIndex].sold) {
+                    return;
+                }
+                
+                // Check if customer can be placed here
+                if (clientOriginalBrand === brand || state.carSlots[brand].every(slot => slot.sold)) {
+                    // Move client to car slot
+                    $client.detach().css({
+                        top: 0,
+                        left: 0,
+                        width: "50px",
+                        height: "50px"
+                    }).appendTo($slot);
+                    
+                    // Update client state
+                    $client.addClass("in-slot");
+                    $client.attr("data-current-brand", brand);
+                    
+                    // Update state
+                    state.carSlots[brand][slotIndex].occupied = true;
+                    $slot.removeClass("available").addClass("occupied");
+                    
+                    // Remove from queue
+                    const clientIndex = state.queue.findIndex(c => c.id === $client.attr("id"));
+                    if (clientIndex !== -1) {
+                        state.queue.splice(clientIndex, 1);
+                    }
+                    
+                    // Make client draggable again
+                    $client.draggable({
+                        revert: "invalid",
+                        cursor: "move",
+                        zIndex: 1000,
+                        containment: "document",
+                        start: function() {
+                            $(this).css('z-index', '10000');
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Make cashier droppable
+        $("#cashier").droppable({
+            accept: ".client",
+            hoverClass: "ui-state-hover",
+            drop: function(event, ui) {
+                const $client = ui.draggable;
+                const brand = $client.attr("data-current-brand");
+                
+                // Create a custom dialog instead of using confirm()
+                const dialog = $(`
+                    <div id="purchase-dialog" title="Purchase Confirmation" style="background-color:white;padding:10px;border: 1px solid">
+                        <p>Would you like to purchase the ${brand} for RM ${state.prices[brand].toLocaleString()}?</p>
+                    </div>
+                `).appendTo('body');
+                
+                dialog.dialog({
+                    resizable: false,
+                    height: "auto",
+                    width: 400,
+                    modal: true,
+                    buttons: {
+                        "YES": function() {
+                            $(this).dialog("close");
+                            dialog.remove();
+                            handlePurchase($client, brand);
+                        },
+                        "NO": function() {
+                            $(this).dialog("close");
+                            dialog.remove();
+                        }
+                    },
+                    close: function() {
+                        dialog.remove();
+                    }
+                });
+            }
+        });
+        
+        // Make exit droppable
+        $("#exit").droppable({
+            accept: ".client",
+            hoverClass: "ui-state-hover",
+            drop: function(event, ui) {
+                
+                setTimeout(() => {
+                    state.stats.customersServed++;
+                    updateStats();
+                }, 500);
+            }
+        });
+    }
+    
+    // Handle car purchase
+    function handlePurchase($client, brand) {
+        // Find the car slot the client came from
+        const $slot = $client.parent();
+        const slotIndex = $slot.data("index");
+        
+        if ($slot.hasClass("car-slot")) {
+            // Mark car as sold
+            state.carSlots[brand][slotIndex].sold = true;
+            state.carSlots[brand][slotIndex].occupied = false;
+            
+            $slot.removeClass("occupied").addClass("sold");
+            $slot.append('<div class="sold-badge">SOLD</div>');
+            
+            // Update stats
+            state.stats.customersServed++;
+            state.stats.carsSold++;
+            state.stats.amountCollected += state.prices[brand];
+            
+            // Remove client
+            $client.addClass("fade-out");
+            setTimeout(() => {
+                $client.remove();
+                updateStats();
+            }, 500);
+        }
+    }
+    
+    // Update statistics display
+    function updateStats() {
+        $("#clients-served").text(state.stats.customersServed);
+        $("#cars-sold").text(state.stats.carsSold);
+        $("#amount").text(`RM ${state.stats.amountCollected.toLocaleString()}`);
+        
+        // Add pulse animation to stats when updated
+        $(".stat-value").addClass("pulse");
+        setTimeout(() => $(".stat-value").removeClass("pulse"), 500);
+    }
+    
+    // Initialize the application
+    preloadCarImages();
+    initializeCarSlots();
+    initializeDroppables();
+    newClient();
 });
